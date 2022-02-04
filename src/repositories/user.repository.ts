@@ -30,6 +30,20 @@ class Repository {
         }
     }
 
+    async findUserPassword(userName: string, password: string):Promise<user | null>{
+        try {
+            const query = "SELECT username, uuid FROM aplication_user where username = $1 and password = crypt($2, 'my_salt')"
+            const values = [userName, password]
+            const {rows} = await db.query<user>(query, values)
+            const [user] = rows
+        return user || null 
+        } catch (error) {
+           throw new DatabaseError("Erro na consulta de usuário e senha");
+            
+        }
+    
+    }
+
     async createUser(user: user): Promise<string> {
         const query = "INSERT INTO aplication_user(username, password) VALUES($1, crypt($2, 'my_salt')) RETURNING uuid"
         const values = [user.userName, user.password]

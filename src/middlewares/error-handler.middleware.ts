@@ -1,12 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import DatabaseError from "../models/errors/database.error.model";
+import forbiddenError from "../models/errors/forbidden.error.models";
 
 
 function errorHandler(error:any, req: Request, res: Response, next:NextFunction) {
     if (error instanceof DatabaseError) {
         res.sendStatus(StatusCodes.BAD_REQUEST).send(StatusCodes.BAD_REQUEST)            
-        }else{
+        }else if(error instanceof forbiddenError){
+            res.sendStatus(StatusCodes.FORBIDDEN).send(StatusCodes.FORBIDDEN)            
+
+        }
+        else{
             res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR).send(StatusCodes.INTERNAL_SERVER_ERROR)
         }
 }
