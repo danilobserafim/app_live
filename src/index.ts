@@ -8,10 +8,13 @@ import usersRouter from "./routes/user.route";
 const app = express()
 //Configurações da aplicação
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 //Configurações de rotas
 app.use(statusRouter)
-app.use(jwtAuthenticationMiddleware, usersRouter) 
 app.use(authorizationRoute)
+
+app.use(jwtAuthenticationMiddleware)
+app.use(usersRouter)
 
 //Configuração dos handler e Errors
 app.use(errorHandler)
