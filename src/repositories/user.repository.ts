@@ -10,10 +10,7 @@ class Repository {
             return rows || []
         } catch (error) {
             throw error
-        }
-
-
-        
+        }        
     }
     async findUserById(uuid: string): Promise<user> {
         try {

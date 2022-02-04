@@ -14,13 +14,15 @@ DELETE / USERS / :UUID
 
 import express, { NextFunction, Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
-import Repository from "../repositories/user.repository";
+import jwtAuthenticationMiddleware from "../middlewares/jwt.authentication.middleware";
+import userRepository from "../repositories/user.repository";
 
 
 const usersRoute = Router();
 
-usersRoute.get("/users",async (req: Request, res: Response, next: NextFunction) => {
-    const users = await Repository.findAllUsers()
+usersRoute.get("/users" , async (req: Request, res: Response, next: NextFunction) => {
+    
+    const users = await userRepository.findAllUsers()
     res.status(StatusCodes.OK).send(users)
 })
 
@@ -28,7 +30,7 @@ usersRoute.get("/users",async (req: Request, res: Response, next: NextFunction) 
 usersRoute.get("/users/:uuid", async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
     try {
         const uuid = req.params.uuid
-        const user = await Repository.findUserById(uuid)
+        const user = await userRepository.findUserById(uuid)
 
         res.status(StatusCodes.OK).send(user)
     } catch (error) {
@@ -41,7 +43,7 @@ usersRoute.post("/users", async (req: Request, res: Response, next: NextFunction
 
     try {
         const newUser = req.body
-        const uuid = await Repository.createUser(newUser)
+        const uuid = await userRepository.createUser(newUser)
 
         res.status(StatusCodes.CREATED).send(uuid)
     } catch (error) {
@@ -59,7 +61,7 @@ usersRoute.patch("/users/:uuid", async (req: Request, res: Response, next: NextF
         const uuid = req.params.uuid;
         const user = req.body;    
         user.uuid = uuid;
-        await Repository.updateUser(user);
+        await userRepository.updateUser(user);
         
         res.sendStatus(StatusCodes.OK);
         
@@ -72,7 +74,7 @@ usersRoute.patch("/users/:uuid", async (req: Request, res: Response, next: NextF
 usersRoute.delete("/users/:uuid", async (req: Request, res: Response, next: NextFunction) => {
 try {
     const uuid = req.params.uuid
-    await Repository.removeUser(uuid)
+    await userRepository.removeUser(uuid)
     res.status(StatusCodes.GONE).send(`${uuid} has been deleted`)
 } catch (error) {
     next(error)
